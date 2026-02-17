@@ -41,7 +41,7 @@ checkRaggiungibilità() {
         echo "Verifica disponibilità server web (curl)..."
         if command -v curl > /dev/null; then
             # Check for HTTP status code (2xx or 3xx for redirects)
-            http_code=$(curl -s -o /dev/null -w "%{http_code}" --max-time 10 "http://$domain")
+            http_code=$(curl -s -o /dev/null -w "%{http_code}" --max-time 10 "http://www.$domain")
             if [[ "$http_code" -ge 200 && "$http_code" -lt 400 ]]; then
                 echo "✅ Server Web: il sito risponde con codice HTTP $http_code.";
             else
@@ -87,10 +87,10 @@ checkCertificato(){
     if ! $cert_valid; then
         # Fallback/additional check using curl
         echo "Effettuando controllo SSL base con curl..."
-        if curl -I --silent --globoff "https://$domain" 2>&1 | grep -q "SSL certificate verify ok."; then
+        if curl -I --silent --globoff "https://www.$domain" 2>&1 | grep -q "SSL certificate verify ok."; then
             echo "✅ il sito è sicuro (controllo base curl)";
             cert_valid=true
-        elif curl -I --silent --globoff "http://$domain" 2>&1 | grep -q "Location: https"; then
+        elif curl -I --silent --globoff "http://www.$domain" 2>&1 | grep -q "Location: https"; then
             echo "✅ Il sito reindirizza a HTTPS (controllo base curl)";
             cert_valid=true
         else
@@ -117,5 +117,3 @@ if check_and_install "whois" "whois"; then
         fi
     fi
 fi
-
-
